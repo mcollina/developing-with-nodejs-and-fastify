@@ -23,6 +23,8 @@ jobs:
     - name: Install, Build and Deploy
       run: |
         npm install
+        git config user.email hello@matteocollina.com
+        git config user.name "Matteo Collina"
         npx gulp deploy
       env:
         CI: true
