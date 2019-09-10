@@ -23,6 +23,12 @@ jobs:
     - name: npm install
       run: |
         npm install
-        npx gulp deploy
       env:
         CI: true
+    - name: Build and Deploy
+      uses: JamesIves/github-pages-deploy-action@494d15faeb70889bd1a54422ca3f0c81c4694a04
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: dist
+        BUILD_SCRIPT: npm install && npx run gulp build
