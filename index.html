@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Developing with Node.js and Fastify</title>
+    <link rel="stylesheet" type="text/css" href="build/build.css">
+  </head>
+  <body>
+    <article>
+      <section><a href="http://nearform.com" style="width: 40%"><img src="./images/nearform.svg"></a>
+        <h1>Developing with Node.js and Fastify</h1><br>
+        <h3>by&nbsp;<a href="http://twitter.com/matteocollina">@matteocollina</a></h3>
+      </section>
+      <section class="trans" data-bespoke-backdrop="spaceballs"></section>
+      <section>
+        <h2>Node Core</h2>
+        <pre><code class="language-javascript">var server = require('http').createServer(handle)
+
+server.listen(3000)
+
+function handle (req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  res.end(JSON.stringify({ hello: 'world' }))
+}
+</code></pre>
+      </section>
+      <section>
+        <h2>Express</h2>
+        <pre><code class="language-javascript">var express = require('express')
+var app = express()
+app.disable('etag').disable('x-powered-by')
+
+app.get('/', function (req, res) {
+  res.json({ hello: 'world' })
+})
+
+app.listen(3000)
+</code></pre>
+      </section>
+      <section><img src="images/autocannon.png" style="width:100%;"></section>
+      <section><img src="images/core-vs-express.png" style="height: 100%"></section>
+      <section><img src="images/opt-process.png" style="height:110%;"></section>
+      <section><img src="images/clinic.png" style="height:80%;"></section>
+      <section><a href="flamegraph-core.html" target="blank"><img src="images/flamegraph-bare.png" style="width: 90%"></a></section>
+      <section><a href="flamegraph-express.html" target="blank"><img src="images/flamegraph-express.png" style="width: 90%"></a></section>
+      <section><img src="images/fastify.png" style="width: 90%"><br>
+        <h3><a href="https://github.com/fastify/fastify">https://github.com/fastify/fastify</a></h3>
+      </section>
+      <section>
+        <pre><code class="language-javascript">'use strict'
+const fastify = require('fastify')()
+
+fastify.get('/', async function (req, reply) {
+  return { hello: 'world' }
+})
+
+fastify.listen(3000)
+</code></pre>
+      </section>
+      <section>
+        <pre><code class="language-javascript">fastify.get('/', {
+  schema: {
+    response: {
+      200: {
+        type: 'object',
+        properties: { hello: { type: 'string' } }
+      }
+    }
+  }
+}, (req, reply) => {
+  reply.send({ hello: 'world' })
+})
+</code></pre>
+      </section>
+      <section><img src="images/core-vs-express-vs-fastify.png" style="height: 100%"></section>
+      <section><a href="flamegraph-fastify-simple.html" target="blank"><img src="images/flamegraph-fastify-simple.png" style="width: 90%"></a></section>
+      <section>
+        <h2>Features Comparison</h2>
+        <table>
+          <tr>
+            <th class="left">Feature</th>
+            <th>Express</th>
+            <th>Hapi</th>
+            <th><em>Fastify</em></th>
+          </tr>
+          <tr>
+            <td class="left">router</td>
+            <td class="green">&#10004;</td>
+            <td class="green">&#10004;</td>
+            <td class="green">&#10004;</td>
+          </tr>
+          <tr>
+            <td class="left">middleware</td>
+            <td class="green">&#10004;</td>
+            <td class="red">&#10060;</td>
+            <td class="green">&#10004;</td>
+          </tr>
+          <tr>
+            <td class="left">plugins</td>
+            <td class="red">&#10060;</td>
+            <td class="green">&#10004;</td>
+            <td class="green">&#10004;</td>
+          </tr>
+          <tr>
+            <td class="left">validation</td>
+            <td class="red">&#10060;</td>
+            <td class="green">&#10004;</td>
+            <td class="green">&#10004;</td>
+          </tr>
+          <tr>
+            <td class="left">hooks</td>
+            <td class="red">&#10060;</td>
+            <td class="green">&#10004;</td>
+            <td class="green">&#10004;</td>
+          </tr>
+          <tr>
+            <td class="left">decorators</td>
+            <td class="red">&#10060;</td>
+            <td class="green">&#10004;</td>
+            <td class="green">&#10004;</td>
+          </tr>
+          <tr>
+            <td class="left">logging</td>
+            <td class="red">&#10060;</td>
+            <td class="green">&#10004;</td>
+            <td class="green">&#10004;</td>
+          </tr>
+          <tr>
+            <td class="left">async/await</td>
+            <td class="red">&#10060;</td>
+            <td class="green">&#10004;</td>
+            <td class="green">&#10004;</td>
+          </tr>
+          <tr>
+            <td class="left">req/sec</td>
+            <td class="red">18k</td>
+            <td class="red">20k</td>
+            <td class="green">36k</td>
+          </tr>
+        </table>
+      </section>
+      <section><img src="images/build-run.png" style="width: 100%"></section>
+      <section>
+        <h2>Logging with Pino</h2><img src="images/pino.png" style="height: 50%"><br><a href="https://getpino.io">getpino.io</a>
+      </section>
+      <section>
+        <h2>middleware</h2>
+        <h3><em>fastify</em>&nbsp;consumes (req, res, next) middlewares!</h3>
+        <ul class="bullet">
+          <li><a href="https://github.com/fastify/middie">https://github.com/fastify/middie</a></li>
+        </ul>
+      </section>
+      <section>
+        <h2>helmet comparison</h2><img src="images/middleware-express-vs-fastify.png" style="height: 100%">
+      </section>
+      <section><a href="flamegraph-express-helmet.html" target="blank"><img src="images/flamegraph-express-helmet.png" style="width: 90%"></a></section>
+      <section><a href="flamegraph-fastify-helmet.html" target="blank"><img src="images/flamegraph-fastify-helmet.png" style="width: 90%"></a></section>
+      <section>
+        <h2>Serialization</h2><img src="images/fast-json-stringify.png" style="height: 90%">
+      </section>
+      <section>
+        <h2>fast-json-stringify</h2>
+        <ul class="bullet">
+          <li>schema-based JSON rendering</li>
+          <li>generates code based on the schema</li>
+          <li>new Function(), but it is safe</li>
+        </ul>
+      </section>
+      <section>
+        <!-- TODO add arrow to ajv-->
+        <h2>validation speed</h2><img src="./images/validators.png" style="height: 50%"><br><a href="https://github.com/ebdrup/json-schema-benchmark">https://github.com/ebdrup/json-schema-benchmark</a>
+      </section>
+      <section>
+        <!-- TODO add arrow to ajv-->
+        <h2>validation correctness</h2><img src="./images/validators-errors.png" style="height: 60%"><br><a href="https://github.com/ebdrup/json-schema-benchmark">https://github.com/ebdrup/json-schema-benchmark</a>
+      </section>
+      <section>
+        <h2>Fast is not everything</h2>
+      </section>
+      <section>
+        <h2>Fastify plugin system</h2>
+        <pre><code class="language-javascript">fastify.register(
+  require('my-plugin'),
+  { options }
+)
+</code></pre>
+      </section>
+      <section>
+        <h2>Everything that could be a plugin, should be a plugin</h2>
+      </section>
+      <section>
+        <pre><code class="language-javascript">module.exports = function myPlugin (fastify, opts, next) {
+  // register other plugins
+  fastify.register(...)
+  // add hooks
+  fastify.addHook(...)
+  // add decorator
+  fastify.decorate(...)
+  // add routes
+  fastify.route(...)
+
+  next()
+}
+</code></pre>
+      </section>
+      <section><img src="images/dag.png" style="width: 70%"></section>
+      <section><img src="images/dag-decorate.png" style="width: 70%"></section>
+      <section>
+        <pre><code class="language-javascript">const fp = require('fastify-plugin')
+
+async function myPlugin (fastify, options) {
+  fastify.decorate('util', yourAwesomeUtility)
+  // now you can use it with `fastify.util`
+}
+
+module.exports = fp(myPlugin)
+</code></pre>
+      </section>
+      <section><img src="images/dag-fp-encapsulate.png" style="width: 70%"></section>
+      <section><img src="images/plugin-real-world.png" style="width: 90%"></section>
+      <section>
+        <pre><code class="language-javascript">const fastify = require('fastify')()
+
+fastify.register(require('./api/v1'), {
+  prefix: '/v1',
+  logLevel: 'error'
+})
+
+fastify.register(require('./api/v2'), {
+  prefix: '/v2',
+  logLevel: 'debug'
+})
+</code></pre>
+      </section>
+      <section><img src="images/fastify.png" style="width: 90%"><br>
+        <h3><a href="https://www.fastify.io">https://www.fastify.io</a></h3>
+      </section>
+      <section>
+        <h1>Demo</h1>
+      </section>
+      <section>
+        <h2>Fastify is not built by one developer</h2>
+      </section>
+      <section>
+        <h2>Open Open Source</h2>
+        <p>Individuals making significant and valuable *contributions* are given commit-access to the project to contribute as they see fit.</p><a href="http://openopensource.org">openopensource.org</a>
+      </section>
+      <section>
+        <h2>10 Collaborators</h2>
+      </section>
+      <section>
+        <h2>180 Contributors</h2>
+      </section>
+      <section>
+        <h2>>= 2000 Commits</h2>
+      </section>
+      <section>
+        <h2>>= 125 releases</h2>
+      </section>
+      <section>
+        <h2>103 plugins</h2>
+      </section>
+      <section>
+        <h3>Most code does not need to go</h3><img src="./images/ludicrous.gif">
+      </section>
+      <section><img class="bullet" src="images/nearform-full.svg" style="width: 100%"></section>
+      <section>
+        <h2>This presentation</h2>
+        <ul class="bullet">
+          <li><a href="https://mcollina.github.io/take-your-http-server-to-ludicrous-speed">https://mcollina.github.io/take-your-http-server-to-ludicrous-speed</a></li>
+          <li><a href="https://github.com/mcollina/take-your-http-server-to-ludicrous-speed">
+              https://github.com/mcollina/take-your-http-server-to-ludicrous-speed
+              </a></li>
+        </ul>
+      </section>
+      <section>
+        <h1>Thanks!</h1><a href="http://nearform.com" style="width: 40%"><img src="./images/nearform.svg"></a><br>
+        <h3><a href="mailto:matteo.collina@nearform.com">matteo.collina@nearform.com</a></h3>
+        <h3><a href="http://twitter.com/matteocollina">@matteocollina</a> on Twitter</h3>
+        <h3><a href="http://www.nearform.com">www.nearform.com</a></h3>
+      </section>
+    </article>
+    <script src="build/build.js"></script>
+  </body>
+</html>
