@@ -1,25 +1,21 @@
 'use strict'
 
-const server = require('fastify')()
+const fastify = require('fastify')
+const autoload = require('fastify-autoload')
+const mongodb = require('fastify-mongodb')
+const { join } = require('path')
 
-server.register(require('fastify-helmet'))
+function build (opts) {
+  const app = fastify(opts)
+  app.register(mongodb, {
+    url: 'mongodb://localhost:27017/demo'
+  })
+  app.register(autoload, {
+    dir: join(__dirname, './routes')
+  })
+  return app
+}
 
-server.register(require('point-of-view'), {
-  engine: {
-    marko: require('marko')
-  }
-})
-
-server.register(require('./subsystem'), {
-  prefix: '/subsystem'
-})
-
-server.get('/json', (req, reply) => {
-  reply.send({ hello: 'world' })
-})
-
-server.get('/', (req, reply) => {
-  reply.view('/index.marko', { hello: 'world' })
-})
-
-server.listen(3000)
+if (require.main === module) {
+  build().listen(process.env.PORT || 3000)
+}
