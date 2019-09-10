@@ -2,7 +2,7 @@ name: Node CI
 
 on:
   push:
-  - master
+    - master
 
 jobs:
   build:
