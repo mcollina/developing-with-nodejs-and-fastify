@@ -20,13 +20,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install
+    - name: Install, Build and Deploy
       run: |
         npm install
-        apt-get update
-        apt-get install -y git
-        git config --global user.email "${COMMIT_EMAIL}"
-        git config --global user.name "${COMMIT_NAME}"
         npx gulp deploy
       env:
         CI: true
